@@ -1,11 +1,11 @@
 from ui_files import mainUI, startUI
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from events import reload_wallet, create_token, createWallet
 import globalvar
 import json
 
-load_dotenv("./.env")
+load_dotenv(find_dotenv())
 
 def main():
     init()

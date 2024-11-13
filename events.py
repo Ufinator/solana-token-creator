@@ -8,7 +8,6 @@ from PyQt6.QtCore import QCoreApplication
 from ui_files import backupUI, mainUI, summaryUI
 from solanacli import get_balance, required_balance, create_mint, create_account, mint_tokens, transfer_tokens, metadata_transaction
 from time import sleep
-from asyncio import get_event_loop
 
 def createWallet(self, window):
     mnemo = Mnemonic("english")
@@ -45,19 +44,18 @@ def continue_create(mainUI_var, backup_window: QMainWindow):
     reload_wallet(globalvar.credentials["pubkey"], mui)
     
 def reload_wallet(pubkey, mui: mainUI.Ui_MainWindow):
-    loop = get_event_loop()
     mui.reloadWalletButton.setText("Please wait...")
     mui.reloadWalletButton.setEnabled(False)
     mui.balanceText.setText("- SOL")
     mui.reqBalText.setText("- SOL")
     QCoreApplication.processEvents()
-    bal = loop.run_until_complete(get_balance(pubkey))
+    bal = get_balance(pubkey)
     if bal == None:
         mui.balanceText.setText("Error!")
     else:
         mui.balanceText.setText(str(bal) + " SOL")
     QCoreApplication.processEvents()
-    req_bal = loop.run_until_complete(required_balance())
+    req_bal = required_balance()
     if bal == None:
         mui.reqBalText.setText("Error!")
     else:
@@ -66,7 +64,6 @@ def reload_wallet(pubkey, mui: mainUI.Ui_MainWindow):
     mui.reloadWalletButton.setText("Reload Wallet")  
 
 def create_token(mui: mainUI.Ui_MainWindow):
-    loop = get_event_loop()
     mui.window = QMainWindow()
     sumUI = summaryUI.Ui_MainWindow()
     sumUI.setupUi(mui.window)
@@ -81,7 +78,7 @@ def create_token(mui: mainUI.Ui_MainWindow):
     tokenname = mui.tokenName.text()
     tokenticker = mui.tokenTicker.text()
     jsonurl = mui.metadataURL.text()
-    mint = loop.run_until_complete(create_mint(pubkey, privkey))
+    mint = create_mint(pubkey, privkey)
     if mint == None:
         print("Mint error!")
         sumUI.tokenAddress.setPlaceholderText("Failed!")
@@ -95,7 +92,7 @@ def create_token(mui: mainUI.Ui_MainWindow):
     sumUI.tokenAccountAddress.setPlaceholderText("Processing...")
     sumUI.progressBar.setValue(20)
     QCoreApplication.processEvents()
-    account = loop.run_until_complete(create_account(mint, pubkey))
+    account = create_account(mint, pubkey)
     if account == None:
         print("Account error!")
         sumUI.tokenAccountAddress.setPlaceholderText("Failed!")
@@ -109,7 +106,7 @@ def create_token(mui: mainUI.Ui_MainWindow):
     sumUI.progressBar.setValue(40)
     sumUI.mintTransaction.setPlaceholderText("Processing...")
     QCoreApplication.processEvents()
-    minted = loop.run_until_complete(mint_tokens(mint, account, pubkey, int(amount)))
+    minted = mint_tokens(mint, account, pubkey, int(amount))
     if minted == None:
         print("Minting error!")
         sumUI.mintTransaction.setPlaceholderText("Failed!")
@@ -123,7 +120,7 @@ def create_token(mui: mainUI.Ui_MainWindow):
     sumUI.progressBar.setValue(60)
     sumUI.metadataTransaction.setPlaceholderText("Processing...")
     QCoreApplication.processEvents()
-    metadata = loop.run_until_complete(metadata_transaction(tokenname, tokenticker, jsonurl, mint, pubkey, privkey))
+    metadata = metadata_transaction(tokenname, tokenticker, jsonurl, mint, pubkey, privkey)
     if metadata == None:
         print("Metadata error!")
         sumUI.metadataTransaction.setPlaceholderText("Failed!")
@@ -136,7 +133,7 @@ def create_token(mui: mainUI.Ui_MainWindow):
     sumUI.metadataTransaction.setText(str(metadata.value))
     sumUI.progressBar.setValue(80)
     sumUI.transferTransaction.setPlaceholderText("Processing...")
-    transfer = loop.run_until_complete(transfer_tokens(mint, pubkey, pubkey_receiver, account, int(amount)))
+    transfer = transfer_tokens(mint, pubkey, pubkey_receiver, account, int(amount))
     if transfer == None:
         print("Transfer error!")
         sumUI.transferTransaction.setPlaceholderText("Failed!")

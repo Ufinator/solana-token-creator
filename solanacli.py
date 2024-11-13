@@ -18,26 +18,19 @@ from borsh_construct import CStruct, U8, String, Option, Vec, Bool, Enum, U64, U
 from construct import Bytes
 from solders.instruction import AccountMeta, Instruction
 
-async def get_balance(pubkey):
-    client = AsyncClient(getenv("RPC"))
-    if not await client.is_connected():
+def get_balance(pubkey):
+    client = Client(getenv("RPC_URL"))
+    if not client.is_connected():
         return None
     pubkey = Pubkey.from_string(pubkey)
-    account_balance = await client.get_balance(pubkey)
+    account_balance = client.get_balance(pubkey)
     return account_balance.value / 1000000000
 
-async def required_balance():
-    client = AsyncClient(getenv("RPC"))
-    if not await client.is_connected():
-        return None
-    mint_bal = await AsyncToken.get_min_balance_rent_for_exempt_for_mint(client)
-    account_bal = await AsyncToken.get_min_balance_rent_for_exempt_for_account(client)
-    multisig_bal = await AsyncToken.get_min_balance_rent_for_exempt_for_multisig(client)
-    req_bal = (mint_bal + account_bal + multisig_bal) / 1000000000
-    return req_bal
+def required_balance():
+    return 0
 
-async def create_mint(pubkey: str, privkey: str):
-    client = AsyncClient(getenv("RPC"))
+async def create_minter(pubkey: str, privkey: str):
+    client = AsyncClient(getenv("RPC_URL"))
     if not await client.is_connected():
         return None
     pubkey = Pubkey.from_string(pubkey)
@@ -58,35 +51,35 @@ async def create_mint(pubkey: str, privkey: str):
     print(val.value)
     return mint_pub
 
-def create_minter(pubkey: str, privkey: str):
-    client = Client(getenv("RPC"))
-    if not client.is_connected():
-        return None
-    val = None
+def create_mint(pubkey: str, privkey: str):
+    client = Client(getenv("RPC_URL"))
+    while not client.is_connected():
+        client = Client(getenv("RPC_URL"))
+    print("Client connected!")
     pubkey = Pubkey.from_string(pubkey)
     privkey = Keypair.from_base58_string(privkey)
-    blockhash = client.get_latest_blockhash().value.blockhash
-    val = spl.create_mint(client, privkey, pubkey, 9, TOKEN_PROGRAM_ID, pubkey, recent_blockhash=blockhash)
+    Token = spl(client, pubkey, TOKEN_PROGRAM_ID, privkey)
+    val = Token.create_mint(client, privkey, pubkey, 9, TOKEN_PROGRAM_ID, pubkey)
     return val
 
-async def create_account(mint: spl, pubkey: str):
+def create_account(mint: spl, pubkey: str):
     val = None
     pubkey = Pubkey.from_string(pubkey)
-    val = await mint.create_associated_token_account(owner=pubkey)
+    val = mint.create_associated_token_account(owner=pubkey)
     return val
 
-async def mint_tokens(mint: spl, account: spl, pubkey: str, amount: int):
+def mint_tokens(mint: spl, account: spl, pubkey: str, amount: int):
     pubkey = Pubkey.from_string(pubkey)
     amount = amount * 1000000000
     val = None
     while val == None:
         try:
-            val = await mint.mint_to(account, pubkey, amount)
+            val = mint.mint_to(account, pubkey, amount)
             return val
         except solana.exceptions.SolanaRpcException:
             print("Mint error!")
 
-async def transfer_tokens(mint: spl, pubkey_owner: str, pubkey_receiver: str, account: spl, amount: int):
+def transfer_tokens(mint: spl, pubkey_owner: str, pubkey_receiver: str, account: spl, amount: int):
     pubkey_owner = Pubkey.from_string(pubkey_owner)
     pubkey_receiver = Pubkey.from_string(pubkey_receiver)
     amount = amount * 1000000000
@@ -95,16 +88,17 @@ async def transfer_tokens(mint: spl, pubkey_owner: str, pubkey_receiver: str, ac
     while val == None:
         try:
             if receiver == None:
-                receiver = await mint.create_associated_token_account(pubkey_receiver)
-            val = await mint.transfer(account, receiver, pubkey_owner, amount)
+                receiver = mint.create_associated_token_account(pubkey_receiver)
+            val = mint.transfer(account, receiver, pubkey_owner, amount)
             return val
         except solana.exceptions.SolanaRpcException:
             print("Transfer error!")
 
-async def metadata_transaction(tokenname: str, tokenticker: str, jsonurl: str, mint: spl, pubkey: str, privkey: str):
-    client = AsyncClient(getenv("RPC"))
-    if not await client.is_connected():
-        return None
+def metadata_transaction(tokenname: str, tokenticker: str, jsonurl: str, mint: spl, pubkey: str, privkey: str):
+    client = Client(getenv("RPC_URL"))
+    while not client.is_connected():
+        client = Client(getenv("RPC_URL"))
+    print("Client connected!")
     pubkey = Pubkey.from_string(pubkey)
     kp = Keypair.from_base58_string(privkey)
     metadata_pubkey = Pubkey.from_string("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s")
@@ -181,11 +175,10 @@ async def metadata_transaction(tokenname: str, tokenticker: str, jsonurl: str, m
     try:
         tx = Transaction()
         tx.add(Instruction(metadata_pubkey, instruction_structure.build(instruction_data), accounts))
-        blockhash = await client.get_latest_blockhash()
+        blockhash = client.get_latest_blockhash()
         tx.recent_blockhash = blockhash.value.blockhash
         tx.sign(kp)
-        val = await client.send_raw_transaction(tx.serialize())
+        val = client.send_raw_transaction(tx.serialize())
         return val
     except solana.exceptions.SolanaRpcException:
         return None
-
