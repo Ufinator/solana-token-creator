@@ -142,7 +142,7 @@ def metadata_transaction(tokenname: str, tokenticker: str, jsonurl: str, mint: s
                 "name": tokenname,
                 "symbol": tokenticker,
                 "uri": jsonurl,
-                "sellerFeeBasisPoints": 500,
+                "sellerFeeBasisPoints": 0,
                 "creators": [
                     {
                         "address": bytes(pubkey),
