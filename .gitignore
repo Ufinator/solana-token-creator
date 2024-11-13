@@ -1,0 +1,5 @@
+assets_ignore/
+venv/
+__pycache__/
+.env
+credentials.json
