@@ -1,11 +1,11 @@
 from ui_files import mainUI, startUI
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from events import reload_wallet, create_token, createWallet
 import globalvar
 import json
 
-load_dotenv(find_dotenv())
+load_dotenv("./.env", override=True)
 
 def main():
     init()
@@ -25,7 +25,7 @@ def main():
     window.show()
     app.exec()
 
-# Load credentials
+# Load credentials, Fix this with f.write()
 def init():
     try:
         with open("./credentials.json", "r") as f:

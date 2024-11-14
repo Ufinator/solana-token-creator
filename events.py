@@ -7,7 +7,6 @@ from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtCore import QCoreApplication
 from ui_files import backupUI, mainUI, summaryUI
 from solanacli import get_balance, required_balance, create_mint, create_account, mint_tokens, transfer_tokens, metadata_transaction
-from time import sleep
 
 def createWallet(self, window):
     mnemo = Mnemonic("english")

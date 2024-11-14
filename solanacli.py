@@ -1,15 +1,10 @@
 import solana.rpc
 from solana.rpc.api import Client
-from solana.rpc.async_api import AsyncClient
 from solders.pubkey import Pubkey
 from spl.token.client import Token as spl
-from spl.token.async_client import AsyncToken
 from solders.keypair import Keypair
 from spl.token.constants import TOKEN_PROGRAM_ID
 from solana.transaction import Transaction
-from spl.token.instructions import initialize_mint, InitializeMintParams
-from solana.rpc.commitment import Confirmed
-from solana.rpc.types import TxOpts
 from os import getenv
 import solana.exceptions
 import solana.rpc.core
@@ -26,30 +21,9 @@ def get_balance(pubkey):
     account_balance = client.get_balance(pubkey)
     return account_balance.value / 1000000000
 
+# Fix this
 def required_balance():
     return 0
-
-async def create_minter(pubkey: str, privkey: str):
-    client = AsyncClient(getenv("RPC_URL"))
-    if not await client.is_connected():
-        return None
-    pubkey = Pubkey.from_string(pubkey)
-    privkey = Keypair.from_base58_string(privkey)
-    tx = Transaction()
-    mint_pub = Keypair().pubkey()
-    params = InitializeMintParams(
-        decimals=6,
-        freeze_authority=pubkey,
-        mint=mint_pub,
-        mint_authority=pubkey,
-        program_id=TOKEN_PROGRAM_ID,
-    )
-    tx.add(initialize_mint(params))
-    tx.sign(privkey)
-    val = await client.send_transaction(tx, privkey, TxOpts(skip_confirmation=False, preflight_commitment=Confirmed))
-    # val = await AsyncToken.create_mint(client, privkey, pubkey, 9, TOKEN_PROGRAM_ID, pubkey)
-    print(val.value)
-    return mint_pub
 
 def create_mint(pubkey: str, privkey: str):
     client = Client(getenv("RPC_URL"))
