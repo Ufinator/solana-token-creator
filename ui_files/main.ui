@@ -177,7 +177,7 @@
      </font>
     </property>
     <property name="text">
-     <string>0.0005 SOL</string>
+     <string>- SOL</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -310,7 +310,7 @@
      </font>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;0.00005 SOL&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;- SOL&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -384,7 +384,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>400</y>
+      <y>350</y>
       <width>341</width>
       <height>22</height>
      </rect>
@@ -400,13 +400,94 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>380</y>
+      <y>330</y>
       <width>201</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>Amount:</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="decimalPlacesBox">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>400</y>
+      <width>41</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>0</number>
+    </property>
+    <property name="maximum">
+     <double>9.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="decimalPlacesText">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>380</y>
+      <width>201</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Decimal places:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="tokenDescriptionTitle">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>430</y>
+      <width>201</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Additional options</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="revokeMintCheckbox">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>450</y>
+      <width>301</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Revoke mint authorization</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="revokeFreezeCheckbox">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>480</y>
+      <width>301</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Revoke freeze authorization</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="changeOwnerCheckbox">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>510</y>
+      <width>301</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change owner of the tokens to your wallet</string>
     </property>
    </widget>
   </widget>
