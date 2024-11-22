@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>913</width>
-    <height>467</height>
+    <height>531</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -237,8 +237,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>296</x>
-      <y>350</y>
+      <x>300</x>
+      <y>450</y>
       <width>331</width>
       <height>23</height>
      </rect>
@@ -259,8 +259,8 @@
    <widget class="QLabel" name="processText">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>380</y>
+      <x>304</x>
+      <y>480</y>
       <width>321</width>
       <height>20</height>
      </rect>
@@ -305,6 +305,138 @@
     </property>
     <property name="text">
      <string>Transfer transaction</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="revokeMintField">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>350</y>
+      <width>401</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="placeholderText">
+     <string>Pending...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="revokeMintTitle">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>330</y>
+      <width>201</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="text">
+     <string>Revoke mint authority transaction</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="revokeFreezeField">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>350</y>
+      <width>401</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="placeholderText">
+     <string>Pending...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="revokeFreezeTitle">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>330</y>
+      <width>231</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="text">
+     <string>Revoke freeze authority transaction</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="donateTitle">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>390</y>
+      <width>231</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="text">
+     <string>Donate transaction</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="donateField">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>410</y>
+      <width>401</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+    <property name="placeholderText">
+     <string>Pending...</string>
     </property>
    </widget>
   </widget>

@@ -1,7 +1,7 @@
 from ui_files import mainUI, startUI
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from dotenv import load_dotenv
-from events import reload_wallet, create_token, createWallet
+from events import reload_wallet, create_token, createWallet, toggle_donate
 import globalvar
 import json
 
@@ -18,6 +18,8 @@ def main():
         mui.walletAddress.setText(globalvar.credentials["pubkey"])
         mui.reloadWalletButton.pressed.connect(lambda: reload_wallet(globalvar.credentials["pubkey"], mui))
         mui.createTokenButton.pressed.connect(lambda: create_token(mui))
+        mui.donateSolanaCheckbox.stateChanged.connect(lambda: toggle_donate(mui))
+        toggle_donate(mui)
         reload_wallet(globalvar.credentials["pubkey"], mui)
     else:
         sui.setupUi(window)

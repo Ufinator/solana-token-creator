@@ -393,7 +393,7 @@
      <number>9</number>
     </property>
     <property name="maximum">
-     <double>1000000000000000.000000000000000</double>
+     <double>18446744073.709552764892578</double>
     </property>
    </widget>
    <widget class="QLabel" name="label_10">
@@ -477,7 +477,7 @@
      <string>Revoke freeze authorization</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="changeOwnerCheckbox">
+   <widget class="QCheckBox" name="donateSolanaCheckbox">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -487,7 +487,36 @@
      </rect>
     </property>
     <property name="text">
-     <string>Change owner of the tokens to your wallet</string>
+     <string>Donate Solana to the developer</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="donateSolanaTitle">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>540</y>
+      <width>201</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Donate Solana:</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="donateSolanaAmount">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>560</y>
+      <width>341</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>9</number>
+    </property>
+    <property name="maximum">
+     <double>1000000000000000.000000000000000</double>
     </property>
    </widget>
   </widget>

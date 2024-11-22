@@ -3,7 +3,10 @@ from solana.rpc.api import Client
 from solders.pubkey import Pubkey
 from spl.token.client import Token as spl
 from solders.keypair import Keypair
+from solders.system_program import TransferParams, transfer
+from solana.transaction import Transaction as txt
 from spl.token.constants import TOKEN_PROGRAM_ID
+from spl.token.instructions import AuthorityType
 from solana.transaction import Transaction
 from os import getenv
 import solana.exceptions
@@ -29,7 +32,7 @@ def create_mint(pubkey: str, privkey: str):
     client = Client(getenv("RPC_URL"))
     while not client.is_connected():
         client = Client(getenv("RPC_URL"))
-    print("Client connected!")
+    print("Client connected! Creating mint")
     pubkey = Pubkey.from_string(pubkey)
     privkey = Keypair.from_base58_string(privkey)
     Token = spl(client, pubkey, TOKEN_PROGRAM_ID, privkey)
@@ -37,7 +40,6 @@ def create_mint(pubkey: str, privkey: str):
     return val
 
 def create_account(mint: spl, pubkey: str):
-    val = None
     pubkey = Pubkey.from_string(pubkey)
     val = mint.create_associated_token_account(owner=pubkey)
     return val
@@ -45,13 +47,20 @@ def create_account(mint: spl, pubkey: str):
 def mint_tokens(mint: spl, account: spl, pubkey: str, amount: int):
     pubkey = Pubkey.from_string(pubkey)
     amount = amount * 1000000000
-    val = None
-    while val == None:
-        try:
-            val = mint.mint_to(account, pubkey, amount)
-            return val
-        except solana.exceptions.SolanaRpcException:
-            print("Mint error!")
+    val = mint.mint_to(account, pubkey, amount)
+    return val
+
+def revokeMint(mint: spl, privkey: str):
+    privkey = Keypair.from_base58_string(privkey)
+    val = mint.set_authority(mint.pubkey, privkey, AuthorityType.MINT_TOKENS)
+    print("Revoked mint authority! (" + str(val.value) + ")")
+    return val
+
+def revokeFreeze(mint: spl, privkey: str):
+    privkey = Keypair.from_base58_string(privkey)
+    val = mint.set_authority(mint.pubkey, privkey, AuthorityType.FREEZE_ACCOUNT)
+    print("Revoked freeze authority! (" + str(val.value) + ")")
+    return val
 
 def transfer_tokens(mint: spl, pubkey_owner: str, pubkey_receiver: str, account: spl, amount: int):
     pubkey_owner = Pubkey.from_string(pubkey_owner)
@@ -156,3 +165,16 @@ def metadata_transaction(tokenname: str, tokenticker: str, jsonurl: str, mint: s
         return val
     except solana.exceptions.SolanaRpcException:
         return None
+
+def donateSolana(privkey: str, amount: float):
+    privkey: Keypair = Keypair.from_base58_string(privkey)
+    pubkey = Pubkey.from_string(getenv("DONATE_PUBKEY"))
+    client = Client(getenv("RPC_URL"))
+    while not client.is_connected():
+        client = Client(getenv("RPC_URL"))
+    print("Client connected!")
+    tx = [transfer(TransferParams(
+        from_pubkey=privkey.pubkey(), to_pubkey=pubkey, lamports=int(amount * 1000000000)
+    ))]
+    val = client.send_legacy_transaction(txt(instructions=tx), privkey)
+    return val

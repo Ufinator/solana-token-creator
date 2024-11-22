@@ -6,7 +6,7 @@ import globalvar
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtCore import QCoreApplication
 from ui_files import backupUI, mainUI, summaryUI
-from solanacli import get_balance, required_balance, create_mint, create_account, mint_tokens, transfer_tokens, metadata_transaction
+from solanacli import get_balance, required_balance, create_mint, create_account, mint_tokens, transfer_tokens, metadata_transaction, revokeMint, revokeFreeze, donateSolana
 
 def createWallet(self, window):
     mnemo = Mnemonic("english")
@@ -66,6 +66,20 @@ def create_token(mui: mainUI.Ui_MainWindow):
     mui.window = QMainWindow()
     sumUI = summaryUI.Ui_MainWindow()
     sumUI.setupUi(mui.window)
+    divi = 5
+    done = 0
+    if mui.revokeFreezeCheckbox.isChecked():
+        sumUI.revokeFreezeField.setVisible(mui.revokeFreezeCheckbox.isChecked())
+        sumUI.revokeFreezeTitle.setVisible(mui.revokeFreezeCheckbox.isChecked())
+        divi += 1
+    if mui.revokeMintCheckbox.isChecked():
+        sumUI.revokeMintField.setVisible(mui.revokeMintCheckbox.isChecked())
+        sumUI.revokeMintTitle.setVisible(mui.revokeMintCheckbox.isChecked())
+        divi += 1
+    if mui.donateSolanaCheckbox.isChecked():
+        sumUI.donateField.setVisible(mui.donateSolanaCheckbox.isChecked())
+        sumUI.donateTitle.setVisible(mui.donateSolanaCheckbox.isChecked())
+        divi += 1
     mui.window.show()
     mui.createTokenButton.setText("Processing...")
     mui.createTokenButton.setEnabled(False)
@@ -87,9 +101,10 @@ def create_token(mui: mainUI.Ui_MainWindow):
         mui.createTokenButton.setEnabled(True)
         return
     print("Mint created! (" + str(mint.pubkey) + ")")
+    done += 1
     sumUI.tokenAddress.setText(str(mint.pubkey))
     sumUI.tokenAccountAddress.setPlaceholderText("Processing...")
-    sumUI.progressBar.setValue(20)
+    sumUI.progressBar.setValue(int(100 / divi * done))
     QCoreApplication.processEvents()
     account = create_account(mint, pubkey)
     if account == None:
@@ -101,8 +116,9 @@ def create_token(mui: mainUI.Ui_MainWindow):
         mui.createTokenButton.setEnabled(True)
         return
     print("Account created! (" + str(account) + ")")
+    done += 1
     sumUI.tokenAccountAddress.setText(str(account))
-    sumUI.progressBar.setValue(40)
+    sumUI.progressBar.setValue(int(100 / divi * done))
     sumUI.mintTransaction.setPlaceholderText("Processing...")
     QCoreApplication.processEvents()
     minted = mint_tokens(mint, account, pubkey, int(amount))
@@ -115,8 +131,9 @@ def create_token(mui: mainUI.Ui_MainWindow):
         mui.createTokenButton.setEnabled(True)
         return
     print("Tokens minted! (" + str(minted.value) + ")")
+    done += 1
     sumUI.mintTransaction.setText(str(minted.value))
-    sumUI.progressBar.setValue(60)
+    sumUI.progressBar.setValue(int(100 / divi * done))
     sumUI.metadataTransaction.setPlaceholderText("Processing...")
     QCoreApplication.processEvents()
     metadata = metadata_transaction(tokenname, tokenticker, jsonurl, mint, pubkey, privkey)
@@ -129,9 +146,25 @@ def create_token(mui: mainUI.Ui_MainWindow):
         mui.createTokenButton.setEnabled(True)
         return
     print("Metadata updated! (" + str(metadata.value) + ")")
+    done += 1
     sumUI.metadataTransaction.setText(str(metadata.value))
-    sumUI.progressBar.setValue(80)
+    sumUI.progressBar.setValue(int(100 / divi * done))
     sumUI.transferTransaction.setPlaceholderText("Processing...")
+    QCoreApplication.processEvents()
+    if mui.revokeFreezeCheckbox.isChecked():
+        revokefreeze = revokeFreeze(mint, privkey)
+        sumUI.revokeFreezeField.setText(str(revokefreeze.value))
+        print("Freeze revoked! (" + str(revokefreeze.value) + ")")
+        done += 1
+        sumUI.progressBar.setValue(int(100 / divi * done))
+        QCoreApplication.processEvents()
+    if mui.revokeMintCheckbox.isChecked():
+        revokemint = revokeMint(mint, privkey)
+        sumUI.revokeMintField.setText(str(revokemint.value))
+        print("Mint authority revoked! (" + str(revokemint.value) + ")")
+        done += 1
+        sumUI.progressBar.setValue(int(100 / divi * done))
+        QCoreApplication.processEvents()
     transfer = transfer_tokens(mint, pubkey, pubkey_receiver, account, int(amount))
     if transfer == None:
         print("Transfer error!")
@@ -142,10 +175,22 @@ def create_token(mui: mainUI.Ui_MainWindow):
         mui.createTokenButton.setEnabled(True)
         return
     print("Tokens transfered! (" + str(transfer.value) + ")")
+    done += 1
+    sumUI.progressBar.setValue(int(100 / divi * done))
     sumUI.transferTransaction.setText(str(transfer.value))
-    sumUI.progressBar.setValue(100)
+    QCoreApplication.processEvents()
+    if mui.donateSolanaCheckbox.isChecked():
+        sumUI.donateField.setPlaceholderText("Processing...")
+        donate = donateSolana(privkey, float(mui.donateSolanaAmount.text()))
+        sumUI.donateField.setText(str(donate.value))
+        print("Solana donated! (" + str(donate.value) + ")")
+        done += 1
+        sumUI.progressBar.setValue(int(100 / divi * done))
     sumUI.processText.setText('<html><head/><body><p><span style=" font-weight:600; color:#00ff00;">Done!</span></p></body></html>')
     mui.createTokenButton.setText("Create Token!")
     mui.createTokenButton.setEnabled(True)
     
-
+def toggle_donate(mainUI_var: mainUI.Ui_MainWindow):
+    mainUI_var.donateSolanaAmount.setVisible(mainUI_var.donateSolanaCheckbox.isChecked())
+    mainUI_var.donateSolanaTitle.setVisible(mainUI_var.donateSolanaCheckbox.isChecked())
+    return
